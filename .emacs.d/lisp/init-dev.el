@@ -58,6 +58,12 @@
   :init (highlight-symbol-mode)
   :bind ("C-c h s" . highlight-symbol))
 
+;; 显示颜色
+(use-package rainbow-mode
+  :ensure t
+  :init (rainbow-mode)
+  )
+
 ;; 格式化
 (use-package format-all
   :ensure t
