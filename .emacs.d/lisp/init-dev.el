@@ -61,8 +61,16 @@
 ;; 显示颜色
 (use-package rainbow-mode
   :ensure t
-  :init (rainbow-mode)
-  )
+  :init (rainbow-mode))
+
+(use-package colorful-mode
+  :ensure t
+  :config
+  (global-colorful-mode t))
+
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
 
 ;; 格式化
 (use-package format-all
@@ -94,10 +102,7 @@
   (setq symbols-outline-window-position 'left)
   (symbols-outline-follow-mode))
 
-;;(use-package eglot
-;;  :ensure t
-;;  :hook (prog-mode . eglot-ensure)
-;;  :bind ("C-c e f" . eglot-format))
+
 
 (use-package aidermacs
   :ensure t
@@ -111,28 +116,75 @@
   :custom
   (aidermacs-use-architect-mode t))
 
-;; 代码提示
-(use-package lsp-mode
-  :ensure t
-  :hook ((python-mode . lsp-deferred)
-         (go-mode . lsp-deferred)
-         (sh-mode . lsp-deferred))
-  :commands (lsp lsp-deferred))
+;; ai agent
+(use-package agent-shell
+  :ensure t)
 
-(use-package lsp-ui
+;; ellama ai
+;;(use-package ellama
+;;)
+
+;; 代码提示
+;;emacs 29以后自带的轻量级代码补全方案
+(use-package eglot
   :ensure t
-  :config
-  (setq lsp-ui-doc-position 'top)
-  :commands
-  lsp-ui-mode)
-(use-package lsp-ivy
+  :hook (prog-mode . eglot-ensure)
+  ;; :config
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(python-mode . ))
+  :bind ("C-c e f" . eglot-format))
+(setq eglot-autostart t)
+
+(use-package corfu
   :ensure t
-  :after (lsp-mode)
-  :commands lsp-ivy-workspace-symbol)
-(use-package lsp-ivy
-  :ensure t
-  :after (lsp-mode)
-  :commands lsp-ivy-workspace-symbol)
+  :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-preselect 'prompt)      ;; Preselect the prompt
+  (corfu-on-exact-match 'insert) ;; Configure handling of exact matches
+
+  :hook ((prog-mode . corfu-mode)
+         (shell-mode . corfu-mode)
+         (eshell-mode . corfu-mode))
+  :init
+  (global-corfu-mode)
+  (corfu-history-mode)
+  (corfu-mouse-mode)
+  (corfu-popupinfo-mode)
+  )
+
+(use-package cape
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block))
+
+(use-package kind-icon
+  :ensure t)
+
+;;(use-package lsp-mode
+;;  :ensure t
+;;  :hook ((python-mode . lsp-deferred)
+;;         (go-mode . lsp-deferred)
+;;         (sh-mode . lsp-deferred))
+;;  :commands (lsp lsp-deferred))
+
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :config
+;;   (setq lsp-ui-doc-position 'top)
+;;   :commands
+;;   lsp-ui-mode)
+;; (use-package lsp-ivy
+;;   :ensure t
+;;   :after (lsp-mode)
+;;   :commands lsp-ivy-workspace-symbol)
+;; (use-package lsp-ivy
+;;   :ensure t
+;;   :after (lsp-mode)
+;;   :commands lsp-ivy-workspace-symbol)
 
 (use-package company
   :ensure t
@@ -153,10 +205,10 @@
                                    company-gtags
                                    company-etags))
   )
-(use-package company-box
-  :ensure t
-  :if window-system
-  :hook (company-mode . company-box-mode))
+;; (use-package company-box
+;;   :ensure t
+;;   :if window-system
+;;   :hook (company-mode . company-box-mode))
 
 ;; debug mode
 (use-package dap-mode
@@ -167,13 +219,13 @@
   (flymake-mode t))
 
 
-(add-hook 'emacs-lisp-hook
-          (lambda()
-            (setq (make-local-variable 'company-backends)
-                  '(company-elisp
-                    company-yasnippet
-                    company-abbrev
-                    company-dabbrev))))
+;; (add-hook 'emacs-lisp-hook
+;;           (lambda()
+;;             (setq (make-local-variable 'company-backends)
+;;                   '(company-elisp
+;;                     company-yasnippet
+;;                     company-abbrev
+;;                     company-dabbrev))))
 
 ;; (use-package company-go
 ;; :config
@@ -222,25 +274,26 @@
   (elpy-mode t)
   (setq elpy-rpc-python-command "python3")
   (aggressive-indent-mode nil)
-  (setq company-backends '(elpy-company-backend
-                           (company-keywords
-                            company-files
-                            company-gtags
-                            company-etags
-                            company-yasnippet
-                            company-abbrev
-                            company-dabbrev)
-                           company-bbdb
-                           company-nxml
-                           company-capf
-                           company-css
-                           company-files
-                           (company-dabbrev-code
-                            company-gtags
-                            company-etags
-                            company-keywords)
-                           company-oddmuse
-                           company-dabbrev)))
+  ;; (setq company-backends '(elpy-company-backend
+  ;;                          (company-keywords
+  ;;                           company-files
+  ;;                           company-gtags
+  ;;                           company-etags
+  ;;                           company-yasnippet
+  ;;                           company-abbrev
+  ;;                           company-dabbrev)
+  ;;                          company-bbdb
+  ;;                          company-nxml
+  ;;                          company-capf
+  ;;                          company-css
+  ;;                          company-files
+  ;;                          (company-dabbrev-code
+  ;;                           company-gtags
+  ;;                           company-etags
+  ;;                           company-keywords)
+  ;;                          company-oddmuse
+  ;;                          company-dabbrev))
+  )
 
 (add-hook 'python-mode-hook
           (lambda ()
@@ -257,10 +310,7 @@
             (google-set-c-style)
             (google-make-newline-indent)
             (setq c-default-style "K&R")
-            (setq c-basic-offset 4))
-          (add-to-list 'company-backends '(company-clang
-                                           company-c-headers
-                                           company-cmake)))
+            (setq c-basic-offset 4)))
 
 (add-hook 'c-mode-hook
           'c++-mode)

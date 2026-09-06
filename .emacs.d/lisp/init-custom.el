@@ -68,6 +68,12 @@
   (setq enable-recursive-minibuffers t)
   )
 
+(use-package ivy-posframe
+  :ensure t
+  :init
+  (ivy-posframe-mode t)
+  )
+
 (use-package orderless
   :ensure t
   :init
