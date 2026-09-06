@@ -129,9 +129,9 @@
 (use-package eglot
   :ensure t
   :hook (prog-mode . eglot-ensure)
-  ;; :config
-  ;; (add-to-list 'eglot-server-programs
-  ;;              '(python-mode . ))
+  :config
+  (add-to-list 'eglot-server-programs
+               '(typescript-mode . ("typescript-language-server" "--stdio")))
   :bind ("C-c e f" . eglot-format))
 (setq eglot-autostart t)
 
@@ -159,6 +159,8 @@
   :init
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-keyword)
+  (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
   (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
 (use-package kind-icon
